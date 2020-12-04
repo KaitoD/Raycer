@@ -1,0 +1,5 @@
+#pragma once
+
+#define RAYCER_STACKTRACE
+
+#define TRACEFUNC TRACE(__PRETTY_FUNCTION__)
