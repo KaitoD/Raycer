@@ -9,3 +9,7 @@ NOTHING
 ## Documents
 
 See `/docs` for some necessary documents
+
+## Coding Convention
+
+When you naming a struct, using lower case, when you are naming a class, use normal Pascal Naming Style.

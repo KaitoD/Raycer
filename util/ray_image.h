@@ -18,19 +18,17 @@ struct rgb_t {
 
 template <class _Tx>
 size_t writeFile(FILE *file, const _Tx *buf, size_t cnt = 1) {
-  TRACE("size_t raycer::writeFile(FILE*, const _Tx*, size_t");
   return fwrite(buf, sizeof(_Tx), cnt, file);
 }
 
 template <class _Tx>
-class Array {
+class array {
   _Tx *buf = nullptr;
   size_t length = 0;
 
  public:
-  Array() {}
+  array() {}
   void resize(size_t size) {
-    TRACE("void raycer::Array::resize(size_t)");
     buf = (_Tx *)realloc(buf, sizeof(_Tx) * size);
     length = size;
   }
@@ -38,7 +36,7 @@ class Array {
   _Tx operator[](int index) const { return buf[index]; }
   _Tx &operator[](int index) { return buf[index]; }
   size_t size() const { return length; }
-  ~Array() {
+  ~array() {
     if (buf) free(buf);
   }
 };
@@ -76,14 +74,13 @@ class BMPImage {
   file_hdr_t fileHeader;
   info_hdr_t infoHeader;
   clr_hdr_t colorHeader;
-  Array<uint8_t> data;
-  Array<rgb_t> buffer;
+  array<uint8_t> data;
+  array<rgb_t> buffer;
 
   uint32_t width, height;
   uint32_t rowStride = 0;
 
   void checkClrHeader(const clr_hdr_t &cld) {
-    TRACE("void raycer::BMPImage::checkClrHeader(const clr_hdr&)");
     clr_hdr_t exp;
     if (cld.redMask != exp.redMask || cld.greenMask != exp.greenMask ||
         cld.blueMask != exp.blueMask || cld.alphaMask != exp.alphaMask)
@@ -93,27 +90,23 @@ class BMPImage {
   }
 
   void writeHeader(FILE *file) {
-    TRACE("void raycer::BMPImage::writeHeader(FILE*)");
     writeFile(file, &fileHeader);
     writeFile(file, &infoHeader);
     if (infoHeader.bitCnt == 32) writeFile(file, &colorHeader);
   }
 
   void writeHeaderAndData(FILE *file) {
-    TRACE("void raycer::BMPImage::writeHeaderAndData(FILE*)");
     writeHeader(file);
     writeFile(file, data.data(), data.size());
   }
 
   uint32_t strideAlign(uint32_t align) {
-    TRACE("uint32_t raycer::BMPImage::strideAlign(uint32_t)");
     uint32_t ns = rowStride;
     while (ns % align != 0) ns++;
     return ns;
   }
 
   void flush() {
-    TRACE("void raycer::BMPImage::flush()");
     uint32_t channel = infoHeader.bitCnt / 8;
     for (auto i = 0; i < buffer.size(); ++i) {
       data[channel * i] = buffer[i].b;
@@ -126,7 +119,6 @@ class BMPImage {
  public:
   BMPImage(uint32_t width, uint32_t height, bool alpha)
       : width(width), height(height) {
-    TRACE("raycer::BMPImage::BMPImage(uint32_t, uint32_t, bool)");
     buffer.resize(width * height);
     infoHeader.width = width;
     infoHeader.height = height;
@@ -153,7 +145,6 @@ class BMPImage {
   }
 
   void flush(const char *filename) {
-    TRACE("void raycer::BMPImage::flush(const char)");
     flush();
     auto len = strlen(filename) + strlen(".bmp") + 1;
     char *fileName = (char *)malloc(sizeof(char) * len);
@@ -169,7 +160,7 @@ class BMPImage {
           writeHeaderAndData(of);
         else {
           uint32_t newStride = strideAlign(4);
-          Array<uint8_t> paddingRow;
+          array<uint8_t> paddingRow;
           paddingRow.resize(newStride - rowStride);
           writeHeader(of);
           for (auto y = 0; y < infoHeader.height; ++y) {
@@ -184,24 +175,18 @@ class BMPImage {
   }
 
   void setPixel(uint32_t x, uint32_t y, rgb_t clr) {
-    TRACE("void raycer::BMPImage::setPixel(uint32_t, uint32_t, rgb_t)");
     if (x >= width || y >= height)
-      panic(
-          "(%u, %u) is outside size of: %ux%u in raycer::BMPImage::setPixel",
-          x, y, width, height);
+      panic("(%u, %u) is outside size of: %ux%u in raycer::BMPImage::setPixel",
+            x, y, width, height);
     buffer[y * infoHeader.width + x] = clr;
   }
 
   void setPixel(uint32_t x, uint32_t y, uint32_t r, uint32_t g, uint32_t b,
                 uint32_t a) {
-    TRACE(
-        "void raycer::BMPImage::setPixel(uint32_t, uint32_t, uint32_t, "
-        "uint32_t, uint32_t, uint32_t)");
     setPixel(x, y, rgb_t(r, g, b, a));
   }
 
   void setBackground(rgb_t c) {
-    TRACE("void raycer::BMPImage::setBackground(rgb_t)");
     for (auto i = 0; i < infoHeader.width; ++i)
       for (auto j = 0; j < infoHeader.height; ++j) setPixel(i, j, c);
   }
