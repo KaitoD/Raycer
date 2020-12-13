@@ -22,7 +22,7 @@ class Timer {
   void start() { _start = clock(); }
   double stop() {
     _end = clock();
-    return ((double)_start - (double)_end) / CLK_TCK;
+    return ((double)_start - (double)_end);
   }
 };
 

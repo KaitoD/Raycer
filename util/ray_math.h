@@ -30,6 +30,8 @@ struct vec3 {
 
   vec3 neg() const { return vec3(-x, -y, -z); }
   vec3 operator-() const { return neg(); }
+  vec3 pos() const { return vec3(x, y, z); }
+  vec3 operator+() const { return pos(); }
   vec3 add(const vec3& v) const { return vec3(x + v.x, y + v.y, z + v.z); }
   vec3 operator+(const vec3& v) const { return add(v); }
   vec3 sub(const vec3& v) const { return vec3(x - v.x, y - v.y, z - v.z); }
@@ -64,6 +66,11 @@ inline vec3 oprod(const vec3& a, const vec3& b) {
 
 // num * vec
 inline vec3 operator*(fnum a, const vec3& v) {
+  return vec3(a * v.x, a * v.y, a * v.z);
+}
+
+// vec * num
+inline vec3 operator*(const vec3& v, fnum a) {
   return vec3(a * v.x, a * v.y, a * v.z);
 }
 
