@@ -1,10 +1,12 @@
 #pragma once
 
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <time.h>
+#include <xmmintrin.h>
+
 
 namespace raycer {
 
