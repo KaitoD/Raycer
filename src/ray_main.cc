@@ -1,6 +1,6 @@
 #include <omp.h>  // for openMP
 
-#include "ray_util.h"
+#include "raycer.hh"
 
 struct ray_trace_opt_t {
   int width, height, sppm;
