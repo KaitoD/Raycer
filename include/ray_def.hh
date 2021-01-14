@@ -11,4 +11,5 @@ namespace raycer {
   typedef float
       fnum;  // change the definition of num to gain higher precision, but
              // this is not necessary to use double since float is enough
+  constexpr auto RECURSE_DEPTH = 50;
 }  // namespace raycer

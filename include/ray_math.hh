@@ -68,12 +68,12 @@ namespace raycer {
   }
 
   template <typename T>
-  inline T gMin(T a, T b) {
+  inline T min(T a, T b) {
     return a < b ? a : b;
   }
 
   template <typename T>
-  inline T gMax(T a, T b) {
+  inline T max(T a, T b) {
     return a > b ? a : b;
   }
 
@@ -128,21 +128,45 @@ namespace raycer {
       return *this;
     }
     vec3& operator-=(const vec3& v) { return subeq(v); }
+
+    fnum length() const { return insDistance(x, y, z); }
+
+    fnum sqrLength() const { return insSqrDistance(x, y, z); }
+
+    void normalize() {
+      auto len = 1 / length();
+      x *= len;
+      y *= len;
+      z *= len;
+    }
+
+    // phong color
+    vec3 phong(const vec3& v) const { return vec3(r * v.r, g * v.g, b * v.b); }
   };
 
   // inner product
   inline fnum iprod(const vec3& a, const vec3& b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
   }
+
+  inline fnum operator*(const vec3& a, const vec3& b) { return iprod(a, b); }
+
   // outer product
   inline vec3 oprod(const vec3& a, const vec3& b) {
     return vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
                 a.x * b.y - a.y * b.x);
   }
 
+  inline vec3 operator%(const vec3& a, const vec3& b) { return oprod(a, b); }
+
   // num * vec
   inline vec3 operator*(fnum a, const vec3& v) {
     return vec3(a * v.x, a * v.y, a * v.z);
+  }
+
+  // vec / num
+  inline vec3 operator/(const vec3& a, fnum b) {
+    return vec3(a.x / b, a.y / b, a.z / b);
   }
 
   // vec * num

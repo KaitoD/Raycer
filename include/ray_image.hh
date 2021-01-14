@@ -9,14 +9,14 @@
 #include "ray_misc.hh"
 
 namespace raycer {
-  struct rgb_t {
+  struct rgb {
     uint8_t r, g, b, a;
-    rgb_t(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 0)
+    rgb(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 0)
         : r(r), g(g), b(b), a(a) {}
   };
 
   template <class _Tx>
-  size_t writeFile(FILE *file, const _Tx *buf, size_t cnt = 1) {
+  size_t write_file(FILE *file, const _Tx *buf, size_t cnt = 1) {
     return fwrite(buf, sizeof(_Tx), cnt, file);
   }
 
@@ -74,7 +74,7 @@ namespace raycer {
     info_hdr_t infoHeader;
     clr_hdr_t colorHeader;
     array<uint8_t> data;
-    array<rgb_t> buffer;
+    array<rgb> buffer;
 
     uint32_t width, height;
     uint32_t rowStride = 0;
@@ -89,14 +89,14 @@ namespace raycer {
     }
 
     void writeHeader(FILE *file) {
-      writeFile(file, &fileHeader);
-      writeFile(file, &infoHeader);
-      if (infoHeader.bitCnt == 32) writeFile(file, &colorHeader);
+      write_file(file, &fileHeader);
+      write_file(file, &infoHeader);
+      if (infoHeader.bitCnt == 32) write_file(file, &colorHeader);
     }
 
     void writeHeaderAndData(FILE *file) {
       writeHeader(file);
-      writeFile(file, data.data(), data.size());
+      write_file(file, data.data(), data.size());
     }
 
     uint32_t strideAlign(uint32_t align) {
@@ -163,8 +163,8 @@ namespace raycer {
             paddingRow.resize(newStride - rowStride);
             writeHeader(of);
             for (auto y = 0; y < infoHeader.height; ++y) {
-              writeFile(of, data.data() + rowStride * y, rowStride);
-              writeFile(of, paddingRow.data(), paddingRow.size());
+              write_file(of, data.data() + rowStride * y, rowStride);
+              write_file(of, paddingRow.data(), paddingRow.size());
             }
           }
         } else
@@ -173,7 +173,7 @@ namespace raycer {
         panic("unable to open file '%s'", fileName);
     }
 
-    void setPixel(uint32_t x, uint32_t y, rgb_t clr) {
+    void setPixel(uint32_t x, uint32_t y, rgb clr) {
       if (x >= width || y >= height)
         panic(
             "(%u, %u) is outside size of: %ux%u in raycer::BMPImage::setPixel",
@@ -183,10 +183,10 @@ namespace raycer {
 
     void setPixel(uint32_t x, uint32_t y, uint32_t r, uint32_t g, uint32_t b,
                   uint32_t a) {
-      setPixel(x, y, rgb_t(r, g, b, a));
+      setPixel(x, y, rgb(r, g, b, a));
     }
 
-    void setBackground(rgb_t c) {
+    void setBackground(rgb c) {
       for (auto i = 0; i < infoHeader.width; ++i)
         for (auto j = 0; j < infoHeader.height; ++j) setPixel(i, j, c);
     }

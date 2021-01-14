@@ -27,7 +27,7 @@ ray_trace_opt_t parseCommandLine(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
-  auto timer = raycer::Timer();
+  auto timer = raycer::timer();
 
   auto opt = parseCommandLine(argc, argv);
   opt.detail();
